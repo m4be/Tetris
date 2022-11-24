@@ -35,20 +35,20 @@ public class Field extends JPanel implements KeyListener {
     @Override
     public void keyTyped(KeyEvent e) {
         if(e.getKeyChar() == 'a') {
-            System.out.println("aaa");
+            System.out.println("A");
             x = x - 10;
         }
 
         if(e.getKeyChar() == 'w') {
-            System.out.println("aaa");
+            System.out.println("W");
             y = y - 10;
         }
         if(e.getKeyChar() == 'd') {
-            System.out.println("aaa");
+            System.out.println("D");
             x = x + 10;
         }
         if(e.getKeyChar() == 's') {
-            System.out.println("aaa");
+            System.out.println("S");
             y = y + 10;
         }
 
