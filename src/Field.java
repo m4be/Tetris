@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class Field extends JPanel implements KeyListener,ActionListener {
@@ -88,12 +89,12 @@ public class Field extends JPanel implements KeyListener,ActionListener {
 
 
     Integer[][] randomShape(){
-        //shapes.add(O);
-        //shapes.add(I);
-        //shapes.add(J);
-        //shapes.add(L);
-        //shapes.add(Z);
-        //shapes.add(S);
+        shapes.add(O);
+        shapes.add(I);
+        shapes.add(J);
+        shapes.add(L);
+        shapes.add(Z);
+        shapes.add(S);
         shapes.add(T);
         int n = (int)(Math.random() * shapes.size());
         return shapes.get(n);
@@ -109,7 +110,7 @@ public class Field extends JPanel implements KeyListener,ActionListener {
         setLayout(null);
         addKeyListener(this);
         setFocusable(true);
-        Timer timer = new Timer(1000,this);
+        Timer timer = new Timer(4000,this);
         timer.start();
 
     }
@@ -124,6 +125,14 @@ public class Field extends JPanel implements KeyListener,ActionListener {
         g2D.drawRect(x + shape[1][0]*40 , y + shape[1][1] * 40,40,40);
         g2D.drawRect(x + shape[2][0]*40 , y + shape[2][1] * 40,40,40);
         g2D.drawRect(x + shape[3][0]*40 , y + shape[3][1] * 40,40,40);
+
+
+
+        Table[shape[0][1]][shape[0][0]] = 1;
+        Table[shape[1][1]][shape[1][0]] = 1;
+        Table[shape[2][1]][shape[2][0]] = 1;
+        Table[shape[3][1]][shape[3][0]] = 1;
+
     }
 
 
@@ -131,20 +140,34 @@ public class Field extends JPanel implements KeyListener,ActionListener {
     public void keyTyped(KeyEvent e) {
         if(e.getKeyChar() == 'a') {
             System.out.println("A");
-            x = x - 40;
+            shape[0][0] -= 1;
+            shape[1][0] -= 1;
+            shape[2][0] -= 1;
+            shape[3][0] -= 1;
         }
 
         if(e.getKeyChar() == 'w') {
             System.out.println("W");
-            y = y - 40;
+
+            shape[0][1] -= 1;
+            shape[1][1] -= 1;
+            shape[2][1] -= 1;
+            shape[3][1] -= 1;
+
         }
         if(e.getKeyChar() == 'd') {
             System.out.println("D");
-            x = x + 40;
+            shape[0][0] += 1;
+            shape[1][0] += 1;
+            shape[2][0] += 1;
+            shape[3][0] += 1;
         }
         if(e.getKeyChar() == 's') {
             System.out.println("S");
-            y = y + 40;
+            shape[0][1] += 1;
+            shape[1][1] += 1;
+            shape[2][1] += 1;
+            shape[3][1] += 1;
         }
         repaint();
     }
@@ -161,15 +184,19 @@ public class Field extends JPanel implements KeyListener,ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        y = y + 40;
-
+        shape[0][1] +=1;
+        shape[1][1] +=1;
+        shape[2][1] +=1;
+        shape[3][1] +=1;
         System.out.println("_______________________");
         for (i = 0; i < 12; i++){
             for (j = 0; j < 9; j++) {
                 System.out.print("[" + Table[i][j] + "],");
+                Table[i][j] = 0;
             }
             System.out.println("\n");
         }
+
         repaint();
 
     }
