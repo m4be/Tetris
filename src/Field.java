@@ -81,6 +81,7 @@ public class Field extends JPanel implements KeyListener,ActionListener {
     };
 
 
+
     Integer[][] randomShape(){
         shapes.add(O);
         shapes.add(I);
@@ -89,11 +90,25 @@ public class Field extends JPanel implements KeyListener,ActionListener {
         shapes.add(Z);
         shapes.add(S);
         shapes.add(T);
+Integer[][] temp = new Integer[4][4];
+
         int n = (int)(Math.random() * shapes.size());
-        return shapes.get(n);
+
+      temp[0][0] =  shapes.get(n)[0][0];
+      temp[1][0] =  shapes.get(n)[1][0];
+      temp[2][0] =  shapes.get(n)[2][0];
+      temp[3][0] =  shapes.get(n)[3][0];
+      temp[0][1] =  shapes.get(n)[0][1];
+      temp[1][1] =  shapes.get(n)[1][1];
+      temp[2][1] =  shapes.get(n)[2][1];
+      temp[3][1] =  shapes.get(n)[3][1];
+
+        return temp;
+
+
     }
 
-    Integer[][] shape = randomShape();
+    Integer[][] shape;
 
     public Field(){
         setBounds(70,20,360,500);
@@ -103,8 +118,10 @@ public class Field extends JPanel implements KeyListener,ActionListener {
         setLayout(null);
         addKeyListener(this);
         setFocusable(true);
-        Timer timer = new Timer(4000,this);
+        Timer timer = new Timer(1000,this);
         timer.start();
+
+        shape  = randomShape();
 
     }
 
@@ -121,16 +138,17 @@ public class Field extends JPanel implements KeyListener,ActionListener {
 
         for (i = 0; i < 12; i++) {
             for (j = 0; j < 9; j++) {
-                if(Table[i][j] == 2)
-                    g2D.drawRect(x + i*40 , y + j * 40,40,40);
+                if(Table[i][j] == 2) {
+                    g2D.fillRect(x + j * 40, y + i * 40, 40, 40);
+                }
             }
         }
 
 
-        Table[shape[0][1]][shape[0][0]] = 2;
-        Table[shape[1][1]][shape[1][0]] = 2;
-        Table[shape[2][1]][shape[2][0]] = 2;
-        Table[shape[3][1]][shape[3][0]] = 2;
+        //Table[shape[0][1]][shape[0][0]] = 2;
+        //Table[shape[1][1]][shape[1][0]] = 2;
+        //Table[shape[2][1]][shape[2][0]] = 2;
+        //Table[shape[3][1]][shape[3][0]] = 2;
 
     }
 
@@ -142,15 +160,19 @@ public class Field extends JPanel implements KeyListener,ActionListener {
 
             if(((shape[0][0] - 1) >= 0) && ((shape[1][0] - 1) >= 0) && ((shape[2][0] - 1) >= 0) && ((shape[3][0] - 1) >= 0)) {
 
-                Table[shape[0][1]][shape[0][0]] = 0;
-                Table[shape[1][1]][shape[1][0]] = 0;
-                Table[shape[2][1]][shape[2][0]] = 0;
-                Table[shape[3][1]][shape[3][0]] = 0;
+                if( Table[shape[0][1]][shape[0][0]-1] == 2 ||
+                    Table[shape[1][1]][shape[1][0]-1] == 2 ||
+                    Table[shape[2][1]][shape[2][0]-1] == 2 ||
+                    Table[shape[3][1]][shape[3][0]-1] == 2)
+                {
 
-                shape[0][0] -= 1;
-                shape[1][0] -= 1;
-                shape[2][0] -= 1;
-                shape[3][0] -= 1;
+                }
+                else {
+                    shape[0][0] -= 1;
+                    shape[1][0] -= 1;
+                    shape[2][0] -= 1;
+                    shape[3][0] -= 1;
+                }
                 repaint();
             }
             else{
@@ -162,10 +184,10 @@ public class Field extends JPanel implements KeyListener,ActionListener {
             System.out.println("W");
 
 
-            Table[shape[0][1]][shape[0][0]] = 0;
-            Table[shape[1][1]][shape[1][0]] = 0;
-            Table[shape[2][1]][shape[2][0]] = 0;
-            Table[shape[3][1]][shape[3][0]] = 0;
+            //Table[shape[0][1]][shape[0][0]] = 0;
+            //Table[shape[1][1]][shape[1][0]] = 0;
+            //Table[shape[2][1]][shape[2][0]] = 0;
+            //Table[shape[3][1]][shape[3][0]] = 0;
 
             shape[0][1] -= 1;
             shape[1][1] -= 1;
@@ -177,42 +199,75 @@ public class Field extends JPanel implements KeyListener,ActionListener {
         if(e.getKeyChar() == 'd') {
             System.out.println("D");
 
-            if(((shape[0][0] + 1) < 9) && ((shape[1][0] + 1) < 9) && ((shape[2][0] + 1) < 9) && ((shape[3][0] + 1) < 9)) {
-
-
-                Table[shape[0][1]][shape[0][0]] = 0;
-                Table[shape[1][1]][shape[1][0]] = 0;
-                Table[shape[2][1]][shape[2][0]] = 0;
-                Table[shape[3][1]][shape[3][0]] = 0;
-
-                shape[0][0] += 1;
-                shape[1][0] += 1;
-                shape[2][0] += 1;
-                shape[3][0] += 1;
+            if(((shape[0][0] + 1) < 9) && ((shape[1][0] + 1) < 9) && ((shape[2][0] + 1) < 9) && ((shape[3][0] + 1) < 9))
+            {
+                if(!( Table[shape[0][1]][shape[0][0]+1] == 2 ||
+                    Table[shape[1][1]][shape[1][0]+1] == 2 ||
+                    Table[shape[2][1]][shape[2][0]+1] == 2 ||
+                    Table[shape[3][1]][shape[3][0]+1] == 2))
+                {
+                    shape[0][0] += 1;
+                    shape[1][0] += 1;
+                    shape[2][0] += 1;
+                    shape[3][0] += 1;
+                }
                 repaint();
             }
             else{
                 System.out.println("D CANCEL");
             }
         }
+
+
         if(e.getKeyChar() == 's') {
             System.out.println("S");
-            if (((shape[0][1] + 1) < 12) && ((shape[1][1] + 1) < 12) && ((shape[2][1] + 1) < 12) && ((shape[3][1] + 1) < 12)) {
+            if (((shape[0][1] + 1) < 12) && ((shape[1][1] + 1) < 12) && ((shape[2][1] + 1) < 12) && ((shape[3][1] + 1) < 12))
+            {
+                if( Table[shape[0][1] + 1][shape[0][0]] == 2 ||
+                    Table[shape[1][1] + 1][shape[1][0]] == 2 ||
+                    Table[shape[2][1] + 1][shape[2][0]] == 2 ||
+                    Table[shape[3][1] + 1][shape[3][0]] == 2)
+                {
+                    Table[shape[0][1]][shape[0][0]] = 2;
+                    Table[shape[1][1]][shape[1][0]] = 2;
+                    Table[shape[2][1]][shape[2][0]] = 2;
+                    Table[shape[3][1]][shape[3][0]] = 2;
 
-                Table[shape[0][1]][shape[0][0]] = 0;
-                Table[shape[1][1]][shape[1][0]] = 0;
-                Table[shape[2][1]][shape[2][0]] = 0;
-                Table[shape[3][1]][shape[3][0]] = 0;
+                    shape = randomShape();
+                    repaint();
 
-                shape[0][1] += 1;
-                shape[1][1] += 1;
-                shape[2][1] += 1;
-                shape[3][1] += 1;
-                repaint();
+                    //for (i = 0; i < 12; i++) {
+                    //    for (j = 0; j < 9; j++) {
+                    //        System.out.print("[" + Table[i][j] + "],");
+                    //        //Table[i][j] = 0;
+                    //    }
+                    //    System.out.println("\n");
+                    //}
+
+                }
+                else {
+                    shape[0][1] += 1;
+                    shape[1][1] += 1;
+                    shape[2][1] += 1;
+                    shape[3][1] += 1;
+
+
+                    repaint();
+                }
             }
             else {
                 System.out.println("S CANCEL");
+
+                Table[shape[0][1]][shape[0][0]] = 2;
+                Table[shape[1][1]][shape[1][0]] = 2;
+                Table[shape[2][1]][shape[2][0]] = 2;
+                Table[shape[3][1]][shape[3][0]] = 2;
+
+                shape = randomShape();
+                repaint();
             }
+
+
         }
     }
 
@@ -230,24 +285,58 @@ public class Field extends JPanel implements KeyListener,ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         if(((shape[0][1] + 1) < 12) && ((shape[1][1] + 1) < 12) && ((shape[2][1] + 1) < 12) && ((shape[3][1] + 1) < 12)) {
+            if( Table[shape[0][1] + 1][shape[0][0]] == 2 ||
+                Table[shape[1][1] + 1][shape[1][0]] == 2 ||
+                Table[shape[2][1] + 1][shape[2][0]] == 2 ||
+                Table[shape[3][1] + 1][shape[3][0]] == 2)
+            {
+                Table[shape[0][1]][shape[0][0]] = 2;
+                Table[shape[1][1]][shape[1][0]] = 2;
+                Table[shape[2][1]][shape[2][0]] = 2;
+                Table[shape[3][1]][shape[3][0]] = 2;
+                shape = randomShape();
+                repaint();
 
+                //for (i = 0; i < 12; i++) {
+                //    for (j = 0; j < 9; j++) {
+                //        System.out.print("[" + Table[i][j] + "],");
+                //        //Table[i][j] = 0;
+                //    }
+                //    System.out.println("\n");
+                //}
 
-            shape[0][1] += 1;
-            shape[1][1] += 1;
-            shape[2][1] += 1;
-            shape[3][1] += 1;
-            System.out.println("_______________________");
-            for (i = 0; i < 12; i++) {
-                for (j = 0; j < 9; j++) {
-                    System.out.print("[" + Table[i][j] + "],");
-                    Table[i][j] = 0;
-                }
-                System.out.println("\n");
             }
+            else {
+                shape[0][1] += 1;
+                shape[1][1] += 1;
+                shape[2][1] += 1;
+                shape[3][1] += 1;
+                //System.out.println("_______________________");
+                //for (i = 0; i < 12; i++) {
+                //    for (j = 0; j < 9; j++) {
+                //        System.out.print("[" + Table[i][j] + "],");
+                //        //Table[i][j] = 0;
+                //    }
+                //    System.out.println("\n");
+                //}
+                repaint();
+            }
+        }
+        else{
+            Table[shape[0][1]][shape[0][0]] = 2;
+            Table[shape[1][1]][shape[1][0]] = 2;
+            Table[shape[2][1]][shape[2][0]] = 2;
+            Table[shape[3][1]][shape[3][0]] = 2;
 
-            // Если сука касается 2 то нахуй я его рот ебал и ебать типо все нахуй стоп блять
+            //for (i = 0; i < 12; i++) {
+            //    for (j = 0; j < 9; j++) {
+            //        System.out.print("[" + Table[i][j] + "],");
+            //        //Table[i][j] = 0;
+            //    }
+            //    System.out.println("\n");
+            //}
 
-
+            shape = randomShape();
             repaint();
         }
     }
