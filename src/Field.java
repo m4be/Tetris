@@ -11,13 +11,17 @@ public class Field extends JPanel implements ActionListener{ //
 
     int x = 0;
     int y = 20;
+
+    int globX = 0;
+    int globY = 0;
     int i;
     int j;
 
-
+    int currRotation = 0;
     public ArrayList<Integer[][]> shapes = new ArrayList<>();
 
-
+    JLabel statusBar;
+    int score = 0;
 
     int[][] Table = new int[][]{
             {0,0,0,0,0,0,0,0,0},  //[0,2]
@@ -34,75 +38,90 @@ public class Field extends JPanel implements ActionListener{ //
             {0,0,0,0,0,0,0,0,0}
     };
 
-
     Integer[][] I = {
             {4,0},
             {4,1},
             {4,2},
-            {4,3}
-    };
+            {4,3},
 
+            {2,2},{3,2},{4,2},{5,2},
+
+            {3,0},
+            {3,1},
+            {3,2},
+            {3,3},
+
+            {2,1},{3,1},{4,1},{5,1},
+
+            {4,0},
+            {4,1},
+            {4,2},
+            {4,3},
+
+
+    };
     Integer[][] O = {
             {4,0},{4,1},
             {5,0},{5,1},
     };
-
     Integer[][] J = {
               {4,0},
               {4,1},
         {3,2},{4,2}
 
     };
-
     Integer[][] L = {
           {4,0},
           {4,1},
           {4,2},{5,2}
     };
-
     Integer[][] Z = {
           {3,0},{4,0},
                 {4,1},{5,1}
     };
-
     Integer[][] S = {
                 {4,0},{5,0},
           {3,1},{4,1}
-    };
 
+
+
+    };
     Integer[][] T = {
             {4,0},
       {3,1},{4,1},{5,1}
     };
 
-
+    Integer[][] tempShape = new Integer[16][2];
 
     Integer[][] randomShape(){
-        shapes.add(O);
+
+        currRotation = 0;
+        //shapes.add(O);
         shapes.add(I);
         //shapes.add(J);
         //shapes.add(L);
         //shapes.add(Z);
         //shapes.add(S);
         //shapes.add(T);
-        Integer[][] temp = new Integer[4][4];
+        Integer[][] temp = new Integer[4][2];
 
         int n = (int)(Math.random() * shapes.size());
 
-        temp[0][0] =  shapes.get(n)[0][0];
-        temp[1][0] =  shapes.get(n)[1][0];
-        temp[2][0] =  shapes.get(n)[2][0];
-        temp[3][0] =  shapes.get(n)[3][0];
-        temp[0][1] =  shapes.get(n)[0][1];
-        temp[1][1] =  shapes.get(n)[1][1];
-        temp[2][1] =  shapes.get(n)[2][1];
-        temp[3][1] =  shapes.get(n)[3][1];
+        for(i = 0; i < 16; i++)
+            for(j = 0; j <2 ; j++)
+                tempShape[i][j] = shapes.get(n)[i][j];
+
+        for(i = 0; i < 4; i++)
+            for(j = 0; j <2 ; j++)
+                temp[i][j] = tempShape[i][j];
+
+
 
         return temp;
     }
 
-
     void removeLine(int k){
+
         int[][] tempTable = new int[12][9];
         boolean done = false;
         int offset = 0;
@@ -131,17 +150,23 @@ public class Field extends JPanel implements ActionListener{ //
                 if(Table[i][j] == 2) {
                     cnt++;
                 }
-                if(cnt == 9)
+                if(cnt == 9) {
                     removeLine(i);
+                    statusBar.setText(Integer.toString(score+=1));
+                }
             }
         }
     }
 
 
+
+
+
     Integer[][] shape;
 
-    public Field(){
-
+    public Field(Window parent){
+        statusBar = parent.score;
+        statusBar.setText(Integer.toString(score));
         setBounds(70,20,360,500);
         setPreferredSize(new Dimension(360, 500));
         setBackground(Color.BLACK);
@@ -149,7 +174,7 @@ public class Field extends JPanel implements ActionListener{ //
         setLayout(null);
         setFocusable(true);
 
-        Timer timer = new Timer(1000,this);
+        Timer timer = new Timer(1222000,this);
         timer.start();
 
         shape  = randomShape();
@@ -158,6 +183,7 @@ public class Field extends JPanel implements ActionListener{ //
     @Override
     public void paintComponent(Graphics g)
     {
+
         checkFilledLine();
         super.paintComponent(g);
         Graphics2D g2D = (Graphics2D) g;
@@ -189,6 +215,7 @@ public class Field extends JPanel implements ActionListener{ //
                     shape[1][0] -= 1;
                     shape[2][0] -= 1;
                     shape[3][0] -= 1;
+                    globX -=1;
                     repaint();
                 }
             }
@@ -197,18 +224,17 @@ public class Field extends JPanel implements ActionListener{ //
             }
         }
     void rotate() {
-              //Table[shape[0][1]][shape[0][0]] = 0;
-            //Table[shape[1][1]][shape[1][0]] = 0;
-            //Table[shape[2][1]][shape[2][0]] = 0;
-            //Table[shape[3][1]][shape[3][0]] = 0;
+        for(i = 0; i < 4 ; i++)
+            for(j = 0; j < 2 ; j++)
+                tempShape[i][j] = shape[i][j];
 
-            shape[0][1] -= 1;
-            shape[1][1] -= 1;
-            shape[2][1] -= 1;
-            shape[3][1] -= 1;
-            repaint();
-
+        for(i = 0; i < 4 ; i++) {
+            shape[i][0] = 6 - 1 - tempShape[i][1];
+            shape[i][1] = tempShape[i][0] - 3;    //При повыщении Y повышается разброс
         }
+
+        repaint();
+    }
         void moveRight(){
             if (((shape[0][0] + 1) < 9) && ((shape[1][0] + 1) < 9) && ((shape[2][0] + 1) < 9) && ((shape[3][0] + 1) < 9)) {
                 if (!(Table[shape[0][1]][shape[0][0] + 1] == 2 ||
@@ -219,6 +245,7 @@ public class Field extends JPanel implements ActionListener{ //
                     shape[1][0] += 1;
                     shape[2][0] += 1;
                     shape[3][0] += 1;
+                    globX +=1;
                 }
                 repaint();
             } else {
@@ -253,6 +280,7 @@ public class Field extends JPanel implements ActionListener{ //
                     shape[1][1] += 1;
                     shape[2][1] += 1;
                     shape[3][1] += 1;
+                    globY +=1;
 
 
                     repaint();

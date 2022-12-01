@@ -5,7 +5,7 @@ import java.awt.event.*;
 public class Window extends JFrame implements ActionListener{ //,KeyListener
 
 
-    private JLabel score = new JLabel("");
+    public JLabel score = new JLabel("");
     private JButton newGame = new JButton();
     private JButton about = new JButton();
     private JButton highScores = new JButton();
@@ -37,7 +37,7 @@ public class Window extends JFrame implements ActionListener{ //,KeyListener
 
         setFocusable(true);
 
-        field = new Field();
+        field = new Field(this);
         //addKeyListener(this);
 
 
@@ -103,7 +103,7 @@ public class Window extends JFrame implements ActionListener{ //,KeyListener
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==newGame){
             remove(field);
-            field = new Field();
+            field = new Field(this);
             add(field);
         }
         if(e.getSource()==about){
