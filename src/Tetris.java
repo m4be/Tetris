@@ -1,13 +1,15 @@
-import java.awt.*;
-import java.awt.event.KeyEvent;
+import javax.swing.*;
 
 public class Tetris {
     public static void main(String[] args) {
 
-        Window game = new Window();
-        game.start();
 
+        SwingUtilities.invokeLater(new Runnable() {
 
-
+            @Override
+            public void run() {
+                new Window();
+            }
+        });
     }
 }

@@ -12,29 +12,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-public class Window extends JFrame implements ActionListener{ //,KeyListener
+public class Window extends JFrame{ //,KeyListener
 
 
     protected JLabel score = new JLabel("");
-    private JButton newGame = new JButton();
-    private JButton about = new JButton();
-    private JButton highScores = new JButton();
-    private JButton exit = new JButton();
+    protected JButton newGame = new JButton();
+    protected JButton about = new JButton();
+    protected JButton highScores = new JButton();
+    protected JButton exit = new JButton();
 
     protected boolean gameOver;
     Field field;
     String str = "";
     File leaderBoard = new File("LeaderBoard.txt");
 
-    void Changer(JButton b,int x, int y, int w, int h,String name){
-        b.setBounds(x,y,w,h);
-        b.setBorder(BorderFactory.createLineBorder(Color.GREEN,2));
-        b.setText(name);
-        b.setBackground(Color.BLACK);
-        b.setForeground(Color.GREEN);
-    }
 
-    void start() {
+
+    Window() {
+
 
 
         int width = 450;
@@ -51,9 +46,9 @@ public class Window extends JFrame implements ActionListener{ //,KeyListener
         setFocusable(true);
         field = new Field(this);
 
+        Controller controller = new Controller(this,field);
 
-        Timer timer = new Timer(1,this);
-        timer.start();
+
         score.setVerticalAlignment(JLabel.BOTTOM);
         score.setHorizontalAlignment(JLabel.CENTER);
         score.setBorder(BorderFactory.createLineBorder(Color.GREEN,2));
@@ -65,10 +60,10 @@ public class Window extends JFrame implements ActionListener{ //,KeyListener
         Changer(about,3,110,65,30,"About");
         Changer(exit,3,150,65,30,"Exit");
 
-        newGame.addActionListener(this);
-        highScores.addActionListener(this);
-        about.addActionListener(this);
-        exit.addActionListener(this);
+        newGame.addActionListener(controller);
+        highScores.addActionListener(controller);
+        about.addActionListener(controller);
+        exit.addActionListener(controller);
 
 
 
@@ -80,44 +75,17 @@ public class Window extends JFrame implements ActionListener{ //,KeyListener
         this.add(exit);
         this.setVisible(true);
 
-
-
-
-
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher( new KeyEventDispatcher() {
-            public boolean dispatchKeyEvent(KeyEvent e) {
-                if(e.getID() == KeyEvent.KEY_PRESSED) {
-                    System.out.println(e.getKeyCode());
-                    switch (e.getKeyCode()) {
-                        case 37:
-                            field.moveLeft();
-                            break;
-                        case 38:
-                            field.rotate();
-                            break;
-                        case 39:
-                            field.moveRight();
-                            break;
-                        case 40:
-                            field.moveDown();
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                return false;
-            }
-        });
-
-
-
     }
 
 
-    public void setGameOver(boolean gameOver){
-        this.gameOver = gameOver;
+    void Changer(JButton b,int x, int y, int w, int h,String name){
+        b.setBounds(x,y,w,h);
+        b.setBorder(BorderFactory.createLineBorder(Color.GREEN,2));
+        b.setText(name);
+        b.setBackground(Color.BLACK);
+        b.setForeground(Color.GREEN);
     }
-
+    public void setGameOver(boolean gameOver){this.gameOver = gameOver;}
     void addPlayer(String name, String sc){
         try {
             leaderBoard.createNewFile();
@@ -133,8 +101,6 @@ public class Window extends JFrame implements ActionListener{ //,KeyListener
 
 
     }
-
-
     void setStr(String value,String key)
     {
         str+=(key + " : " + value + "\n");
@@ -162,42 +128,32 @@ public class Window extends JFrame implements ActionListener{ //,KeyListener
 
                     });
             JOptionPane.showMessageDialog(null, str);
+            str = "";
         }
         catch (IOException e){
 
         }
     }
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if(e.getSource()==newGame){
+    void showAbout(){
+    JOptionPane.showMessageDialog(null, "Made by me");
+}
+    void startNewGame(){
+        remove(field);
+        field = new Field(this);
+        add(field);
+    }
+    void checkGameOver(){
+        if(gameOver)
+        {
             remove(field);
+            String playerName = JOptionPane.showInputDialog("GG Enter name");
             field = new Field(this);
             add(field);
-        }
-        else if(e.getSource()==about){
-            JOptionPane.showMessageDialog(null, "Made by me");
-        }
-        else if(e.getSource()==highScores){
-            showLeaderBoard();
-        }
-        else if(e.getSource()==exit){
+            score.setText("0");
 
+            addPlayer(playerName, score.getText());
+            gameOver = false;
         }
-        else{
-            if(gameOver)
-            {
-                remove(field);
-                field = new Field(this);
-                add(field);
-                score.setText("0");
-                String playerName = JOptionPane.showInputDialog("GG Enter name");
-                addPlayer(playerName, score.getText());
-                gameOver = false;
-            }
-        }
-
     }
-
-
 
 }

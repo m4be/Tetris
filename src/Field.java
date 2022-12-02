@@ -2,87 +2,40 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.nio.file.Path;
 import java.util.ArrayList;
 
 
-public class Field extends JPanel implements ActionListener{ //
+public class Field extends JPanel implements ActionListener{
 
+
+    Window parent;
+    public ArrayList<Integer[][]> shapes = new ArrayList<>();
+    Integer[][] shape;
     int x = 0;
     int y = 20;
 
-    int globX = 0;
-    int globY = 0;
     int i;
     int j;
-
-    int currRotation = 0;
-    public ArrayList<Integer[][]> shapes = new ArrayList<>();
-
     int score = 0;
 
-    Window parent;
+    public Field(Window parent){
+        this.parent = parent;
 
-    int[][] Table = new int[][]{
-            {0,0,0,0,0,0,0,0,0},  //[0,2]
-            {0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,0}
-    };
+        setBounds(70,20,360,500);
+        setPreferredSize(new Dimension(360, 500));
+        setBackground(Color.BLACK);
+        setBorder(BorderFactory.createLineBorder(Color.GREEN,2));
+        setLayout(null);
+        setFocusable(true);
 
-    Integer[][] I = {
-            {4,0},
-            {4,1},
-            {4,2},
-            {4,3},
+        Timer timer = new Timer(750,this);
+        timer.start();
 
-    };
-    Integer[][] O = {
-            {4,0},{4,1},
-            {5,0},{5,1},
-    };
-    Integer[][] J = {
-              {4,0},
-              {4,1},
-        {3,2},{4,2}
-
-    };
-    Integer[][] L = {
-          {4,0},
-          {4,1},
-          {4,2},{5,2}
-    };
-    Integer[][] Z = {
-          {3,0},{4,0},
-                {4,1},{5,1}
-    };
-    Integer[][] S = {
-                {4,0},{5,0},
-          {3,1},{4,1}
-
-
-
-    };
-    Integer[][] T = {
-            {4,0},
-      {3,1},{4,1},{5,1}
-    };
-
-    Integer[][] tempShape = new Integer[16][2];
+        shape  = randomShape();
+    }
 
     Integer[][] randomShape(){
 
-        currRotation = 0;
         shapes.add(O);
         shapes.add(I);
         shapes.add(J);
@@ -102,7 +55,6 @@ public class Field extends JPanel implements ActionListener{ //
 
         return temp;
     }
-
     void removeLine(int k){
 
         int[][] tempTable = new int[12][9];
@@ -114,8 +66,6 @@ public class Field extends JPanel implements ActionListener{ //
                 if(i == k && !done)
                 {
                     tempTable[i][j] = Table[i-1][j];
-
-                    System.out.println(tempTable[i][j]);
                     offset = 1;
                     if(j == 8)
                         done = true;
@@ -140,36 +90,107 @@ public class Field extends JPanel implements ActionListener{ //
             }
         }
     }
-
     void checkGameOver(){
         for(j = 0; j < 9; j++)
             if(Table[2][j] == 2)
                 parent.setGameOver(true);
     }
+    void moveLeft(){
+            if(((shape[0][0] - 1) >= 0) && ((shape[1][0] - 1) >= 0) && ((shape[2][0] - 1) >= 0) && ((shape[3][0] - 1) >= 0)) {
 
-
-
-    Integer[][] shape;
-
-    public Field(Window parent){
-        this.parent = parent;
-
-
-
-
-        setBounds(70,20,360,500);
-        setPreferredSize(new Dimension(360, 500));
-        setBackground(Color.BLACK);
-        setBorder(BorderFactory.createLineBorder(Color.GREEN,2));
-        setLayout(null);
-        setFocusable(true);
-
-        Timer timer = new Timer(750,this);
-        timer.start();
-
-        shape  = randomShape();
+                if( !(Table[shape[0][1]][shape[0][0]-1] == 2 ||
+                      Table[shape[1][1]][shape[1][0]-1] == 2 ||
+                      Table[shape[2][1]][shape[2][0]-1] == 2 ||
+                      Table[shape[3][1]][shape[3][0]-1] == 2))
+                {
+                    shape[0][0] -= 1;
+                    shape[1][0] -= 1;
+                    shape[2][0] -= 1;
+                    shape[3][0] -= 1;
+                    repaint();
+                }
+            }
+        }
+    void moveRight(){
+        if (((shape[0][0] + 1) < 9) && ((shape[1][0] + 1) < 9) && ((shape[2][0] + 1) < 9) && ((shape[3][0] + 1) < 9)) {
+            if (!(Table[shape[0][1]][shape[0][0] + 1] == 2 ||
+                    Table[shape[1][1]][shape[1][0] + 1] == 2 ||
+                    Table[shape[2][1]][shape[2][0] + 1] == 2 ||
+                    Table[shape[3][1]][shape[3][0] + 1] == 2)) {
+                shape[0][0] += 1;
+                shape[1][0] += 1;
+                shape[2][0] += 1;
+                shape[3][0] += 1;
+            }
+        }
+        repaint();
     }
+    void moveDown (){
 
+            if (((shape[0][1] + 1) < 12) && ((shape[1][1] + 1) < 12) && ((shape[2][1] + 1) < 12) && ((shape[3][1] + 1) < 12)) {
+                if (Table[shape[0][1] + 1][shape[0][0]] == 2 ||
+                        Table[shape[1][1] + 1][shape[1][0]] == 2 ||
+                        Table[shape[2][1] + 1][shape[2][0]] == 2 ||
+                        Table[shape[3][1] + 1][shape[3][0]] == 2) {
+                    Table[shape[0][1]][shape[0][0]] = 2;
+                    Table[shape[1][1]][shape[1][0]] = 2;
+                    Table[shape[2][1]][shape[2][0]] = 2;
+                    Table[shape[3][1]][shape[3][0]] = 2;
+
+                    shape = randomShape();
+                    repaint();
+
+
+                } else {
+                    shape[0][1] += 1;
+                    shape[1][1] += 1;
+                    shape[2][1] += 1;
+                    shape[3][1] += 1;
+                    repaint();
+                }
+            } else {
+                Table[shape[0][1]][shape[0][0]] = 2;
+                Table[shape[1][1]][shape[1][0]] = 2;
+                Table[shape[2][1]][shape[2][0]] = 2;
+                Table[shape[3][1]][shape[3][0]] = 2;
+
+                shape = randomShape();
+                repaint();
+            }
+        }
+    @Override
+    public void actionPerformed (ActionEvent e){
+            if (((shape[0][1] + 1) < 12) && ((shape[1][1] + 1) < 12) && ((shape[2][1] + 1) < 12) && ((shape[3][1] + 1) < 12)) {
+                if (Table[shape[0][1] + 1][shape[0][0]] == 2 ||
+                        Table[shape[1][1] + 1][shape[1][0]] == 2 ||
+                        Table[shape[2][1] + 1][shape[2][0]] == 2 ||
+                        Table[shape[3][1] + 1][shape[3][0]] == 2)
+                {
+                    Table[shape[0][1]][shape[0][0]] = 2;
+                    Table[shape[1][1]][shape[1][0]] = 2;
+                    Table[shape[2][1]][shape[2][0]] = 2;
+                    Table[shape[3][1]][shape[3][0]] = 2;
+                    shape = randomShape();
+                    repaint();
+
+                } else {
+                    shape[0][1] += 1;
+                    shape[1][1] += 1;
+                    shape[2][1] += 1;
+                    shape[3][1] += 1;
+
+                    repaint();
+                }
+            } else {
+                Table[shape[0][1]][shape[0][0]] = 2;
+                Table[shape[1][1]][shape[1][0]] = 2;
+                Table[shape[2][1]][shape[2][0]] = 2;
+                Table[shape[3][1]][shape[3][0]] = 2;
+
+                shape = randomShape();
+                repaint();
+            }
+        }
     @Override
     public void paintComponent(Graphics g)
     {
@@ -195,156 +216,61 @@ public class Field extends JPanel implements ActionListener{ //
     }
 
 
-    void moveLeft(){
-            if(((shape[0][0] - 1) >= 0) && ((shape[1][0] - 1) >= 0) && ((shape[2][0] - 1) >= 0) && ((shape[3][0] - 1) >= 0)) {
-
-                if( !(Table[shape[0][1]][shape[0][0]-1] == 2 ||
-                      Table[shape[1][1]][shape[1][0]-1] == 2 ||
-                      Table[shape[2][1]][shape[2][0]-1] == 2 ||
-                      Table[shape[3][1]][shape[3][0]-1] == 2))
-                {
-                    shape[0][0] -= 1;
-                    shape[1][0] -= 1;
-                    shape[2][0] -= 1;
-                    shape[3][0] -= 1;
-                    globX -=1;
-                    repaint();
-                }
-            }
-            else{
-                System.out.println("A CANCELED");
-            }
-        }
-    void rotate() {          //Продолжить или удалить
-        for(i = 0; i < 4 ; i++)
-            for(j = 0; j < 2 ; j++)
-                tempShape[i][j] = shape[i][j];
-
-        for(i = 0; i < 4 ; i++) {
-            shape[i][0] = 6 - 1 - tempShape[i][1] + globY;
-            shape[i][1] = tempShape[i][0] - 3 + globX;    //При повыщении Y повышается разброс
-        }
-
-        repaint();
-    }
-        void moveRight(){
-            if (((shape[0][0] + 1) < 9) && ((shape[1][0] + 1) < 9) && ((shape[2][0] + 1) < 9) && ((shape[3][0] + 1) < 9)) {
-                if (!(Table[shape[0][1]][shape[0][0] + 1] == 2 ||
-                        Table[shape[1][1]][shape[1][0] + 1] == 2 ||
-                        Table[shape[2][1]][shape[2][0] + 1] == 2 ||
-                        Table[shape[3][1]][shape[3][0] + 1] == 2)) {
-                    shape[0][0] += 1;
-                    shape[1][0] += 1;
-                    shape[2][0] += 1;
-                    shape[3][0] += 1;
-                    globX +=1;
-                }
-                repaint();
-            } else {
-                System.out.println("D CANCEL");
-            }
-        }
-        void moveDown (){
-
-            if (((shape[0][1] + 1) < 12) && ((shape[1][1] + 1) < 12) && ((shape[2][1] + 1) < 12) && ((shape[3][1] + 1) < 12)) {
-                if (Table[shape[0][1] + 1][shape[0][0]] == 2 ||
-                        Table[shape[1][1] + 1][shape[1][0]] == 2 ||
-                        Table[shape[2][1] + 1][shape[2][0]] == 2 ||
-                        Table[shape[3][1] + 1][shape[3][0]] == 2) {
-                    Table[shape[0][1]][shape[0][0]] = 2;
-                    Table[shape[1][1]][shape[1][0]] = 2;
-                    Table[shape[2][1]][shape[2][0]] = 2;
-                    Table[shape[3][1]][shape[3][0]] = 2;
-
-                    shape = randomShape();
-                    repaint();
-
-                    //for (i = 0; i < 12; i++) {
-                    //    for (j = 0; j < 9; j++) {
-                    //        System.out.print("[" + Table[i][j] + "],");
-                    //        //Table[i][j] = 0;
-                    //    }
-                    //    System.out.println("\n");
-                    //}
-
-                } else {
-                    shape[0][1] += 1;
-                    shape[1][1] += 1;
-                    shape[2][1] += 1;
-                    shape[3][1] += 1;
-                    globY +=1;
 
 
-                    repaint();
-                }
-            } else {
-                System.out.println("S CANCEL");
+    int[][] Table = new int[][]{
+            {0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0}
+    };
 
-                Table[shape[0][1]][shape[0][0]] = 2;
-                Table[shape[1][1]][shape[1][0]] = 2;
-                Table[shape[2][1]][shape[2][0]] = 2;
-                Table[shape[3][1]][shape[3][0]] = 2;
+    Integer[][] I = {
+            {4,0},
+            {4,1},
+            {4,2},
+            {4,3},
 
-                shape = randomShape();
-                repaint();
-            }
-        }
+    };
+    Integer[][] O = {
+            {4,0},{4,1},
+            {5,0},{5,1},
+    };
+    Integer[][] J = {
+            {4,0},
+            {4,1},
+            {3,2},{4,2}
 
-      @Override
-        public void actionPerformed (ActionEvent e){
-            if (((shape[0][1] + 1) < 12) && ((shape[1][1] + 1) < 12) && ((shape[2][1] + 1) < 12) && ((shape[3][1] + 1) < 12)) {
-                if (Table[shape[0][1] + 1][shape[0][0]] == 2 ||
-                        Table[shape[1][1] + 1][shape[1][0]] == 2 ||
-                        Table[shape[2][1] + 1][shape[2][0]] == 2 ||
-                        Table[shape[3][1] + 1][shape[3][0]] == 2)
-                {
-                    Table[shape[0][1]][shape[0][0]] = 2;
-                    Table[shape[1][1]][shape[1][0]] = 2;
-                    Table[shape[2][1]][shape[2][0]] = 2;
-                    Table[shape[3][1]][shape[3][0]] = 2;
-                    shape = randomShape();
-                    repaint();
+    };
+    Integer[][] L = {
+            {4,0},
+            {4,1},
+            {4,2},{5,2}
+    };
+    Integer[][] Z = {
+            {3,0},{4,0},
+            {4,1},{5,1}
+    };
+    Integer[][] S = {
+            {4,0},{5,0},
+            {3,1},{4,1}
 
-                    //for (i = 0; i < 12; i++) {
-                    //    for (j = 0; j < 9; j++) {
-                    //        System.out.print("[" + Table[i][j] + "],");
-                    //        //Table[i][j] = 0;
-                    //    }
-                    //    System.out.println("\n");
-                    //}
 
-                } else {
-                    shape[0][1] += 1;
-                    shape[1][1] += 1;
-                    shape[2][1] += 1;
-                    shape[3][1] += 1;
-                    //System.out.println("_______________________");
-                    //for (i = 0; i < 12; i++) {
-                    //    for (j = 0; j < 9; j++) {
-                    //        System.out.print("[" + Table[i][j] + "],");
-                    //        //Table[i][j] = 0;
-                    //    }
-                    //    System.out.println("\n");
-                    //}
-                    repaint();
-                }
-            } else {
-                Table[shape[0][1]][shape[0][0]] = 2;
-                Table[shape[1][1]][shape[1][0]] = 2;
-                Table[shape[2][1]][shape[2][0]] = 2;
-                Table[shape[3][1]][shape[3][0]] = 2;
 
-                //for (i = 0; i < 12; i++) {
-                //    for (j = 0; j < 9; j++) {
-                //        System.out.print("[" + Table[i][j] + "],");
-                //        //Table[i][j] = 0;
-                //    }
-                //    System.out.println("\n");
-                //}
+    };
+    Integer[][] T = {
+            {4,0},
+            {3,1},{4,1},{5,1}
+    };
 
-                shape = randomShape();
-                repaint();
-            }
-        }
+
 }
 
