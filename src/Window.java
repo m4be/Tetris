@@ -1,17 +1,27 @@
+import org.w3c.dom.ls.LSOutput;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
 
 public class Window extends JFrame implements ActionListener{ //,KeyListener
 
 
-    public JLabel score = new JLabel("");
+    protected JLabel score = new JLabel("");
     private JButton newGame = new JButton();
     private JButton about = new JButton();
     private JButton highScores = new JButton();
     private JButton exit = new JButton();
 
+    protected boolean gameOver;
     Field field;
+
+    File leaderBoard = new File("LeaderBoard.txt");
 
     void Changer(JButton b,int x, int y, int w, int h,String name){
         b.setBounds(x,y,w,h);
@@ -36,13 +46,11 @@ public class Window extends JFrame implements ActionListener{ //,KeyListener
         this.setLayout(null);
 
         setFocusable(true);
-
         field = new Field(this);
-        //addKeyListener(this);
 
 
-
-
+        Timer timer = new Timer(1,this);
+        timer.start();
         score.setVerticalAlignment(JLabel.BOTTOM);
         score.setHorizontalAlignment(JLabel.CENTER);
         score.setBorder(BorderFactory.createLineBorder(Color.GREEN,2));
@@ -68,6 +76,9 @@ public class Window extends JFrame implements ActionListener{ //,KeyListener
         this.add(highScores);
         this.add(exit);
         this.setVisible(true);
+
+
+
 
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher( new KeyEventDispatcher() {
@@ -99,6 +110,29 @@ public class Window extends JFrame implements ActionListener{ //,KeyListener
 
     }
 
+
+    public void setGameOver(boolean gameOver){
+        this.gameOver = gameOver;
+    }
+
+    void addPlayer(String name){
+
+        try {
+            leaderBoard.createNewFile();
+
+                FileWriter writer = new FileWriter(leaderBoard,true);
+                BufferedWriter bufferWriter = new BufferedWriter(writer);
+                bufferWriter.write(name + " : " + score.getText() + "\n");
+                bufferWriter.close();
+
+        }
+        catch (IOException e){
+            System.out.println(e.getMessage());
+        }
+
+
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==newGame){
@@ -106,14 +140,26 @@ public class Window extends JFrame implements ActionListener{ //,KeyListener
             field = new Field(this);
             add(field);
         }
-        if(e.getSource()==about){
+        else if(e.getSource()==about){
 
         }
-        if(e.getSource()==highScores){
+        else if(e.getSource()==highScores){
 
         }
-        if(e.getSource()==exit){
+        else if(e.getSource()==exit){
 
+        }
+        else{
+            if(gameOver)
+            {
+                remove(field);
+                field = new Field(this);
+                add(field);
+
+                String playerName = JOptionPane.showInputDialog("GG");
+                addPlayer(playerName);
+                gameOver = false;
+            }
         }
 
     }

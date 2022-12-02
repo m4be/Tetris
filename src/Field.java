@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 
@@ -21,7 +22,10 @@ public class Field extends JPanel implements ActionListener{ //
     public ArrayList<Integer[][]> shapes = new ArrayList<>();
 
     JLabel statusBar;
+    boolean gameOver;
     int score = 0;
+
+    Window parent;
 
     int[][] Table = new int[][]{
             {0,0,0,0,0,0,0,0,0},  //[0,2]
@@ -43,21 +47,6 @@ public class Field extends JPanel implements ActionListener{ //
             {4,1},
             {4,2},
             {4,3},
-
-            {2,2},{3,2},{4,2},{5,2},
-
-            {3,0},
-            {3,1},
-            {3,2},
-            {3,3},
-
-            {2,1},{3,1},{4,1},{5,1},
-
-            {4,0},
-            {4,1},
-            {4,2},
-            {4,3},
-
 
     };
     Integer[][] O = {
@@ -96,24 +85,20 @@ public class Field extends JPanel implements ActionListener{ //
     Integer[][] randomShape(){
 
         currRotation = 0;
-        //shapes.add(O);
+        shapes.add(O);
         shapes.add(I);
-        //shapes.add(J);
-        //shapes.add(L);
-        //shapes.add(Z);
-        //shapes.add(S);
-        //shapes.add(T);
+        shapes.add(J);
+        shapes.add(L);
+        shapes.add(Z);
+        shapes.add(S);
+        shapes.add(T);
         Integer[][] temp = new Integer[4][2];
 
         int n = (int)(Math.random() * shapes.size());
 
-        for(i = 0; i < 16; i++)
-            for(j = 0; j <2 ; j++)
-                tempShape[i][j] = shapes.get(n)[i][j];
-
         for(i = 0; i < 4; i++)
             for(j = 0; j <2 ; j++)
-                temp[i][j] = tempShape[i][j];
+                temp[i][j] = shapes.get(n)[i][j];
 
 
 
@@ -158,15 +143,25 @@ public class Field extends JPanel implements ActionListener{ //
         }
     }
 
+    void checkGameOver(){
+        for(j = 0; j < 9; j++)
+            if(Table[2][j] == 2)
+                parent.setGameOver(true);
 
+    }
 
 
 
     Integer[][] shape;
 
     public Field(Window parent){
+        this.parent = parent;
+
         statusBar = parent.score;
         statusBar.setText(Integer.toString(score));
+
+
+
         setBounds(70,20,360,500);
         setPreferredSize(new Dimension(360, 500));
         setBackground(Color.BLACK);
@@ -174,7 +169,7 @@ public class Field extends JPanel implements ActionListener{ //
         setLayout(null);
         setFocusable(true);
 
-        Timer timer = new Timer(1222000,this);
+        Timer timer = new Timer(750,this);
         timer.start();
 
         shape  = randomShape();
@@ -185,6 +180,8 @@ public class Field extends JPanel implements ActionListener{ //
     {
 
         checkFilledLine();
+        checkGameOver();
+
         super.paintComponent(g);
         Graphics2D g2D = (Graphics2D) g;
         g2D.setPaint(Color.GREEN);
@@ -223,14 +220,14 @@ public class Field extends JPanel implements ActionListener{ //
                 System.out.println("A CANCELED");
             }
         }
-    void rotate() {
+    void rotate() {          //Продолжить или удалить
         for(i = 0; i < 4 ; i++)
             for(j = 0; j < 2 ; j++)
                 tempShape[i][j] = shape[i][j];
 
         for(i = 0; i < 4 ; i++) {
-            shape[i][0] = 6 - 1 - tempShape[i][1];
-            shape[i][1] = tempShape[i][0] - 3;    //При повыщении Y повышается разброс
+            shape[i][0] = 6 - 1 - tempShape[i][1] + globY;
+            shape[i][1] = tempShape[i][0] - 3 + globX;    //При повыщении Y повышается разброс
         }
 
         repaint();
