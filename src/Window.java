@@ -7,6 +7,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Window extends JFrame implements ActionListener{ //,KeyListener
@@ -20,7 +23,7 @@ public class Window extends JFrame implements ActionListener{ //,KeyListener
 
     protected boolean gameOver;
     Field field;
-
+    String str = "";
     File leaderBoard = new File("LeaderBoard.txt");
 
     void Changer(JButton b,int x, int y, int w, int h,String name){
@@ -115,16 +118,14 @@ public class Window extends JFrame implements ActionListener{ //,KeyListener
         this.gameOver = gameOver;
     }
 
-    void addPlayer(String name){
-
+    void addPlayer(String name, String sc){
         try {
             leaderBoard.createNewFile();
-
                 FileWriter writer = new FileWriter(leaderBoard,true);
                 BufferedWriter bufferWriter = new BufferedWriter(writer);
-                bufferWriter.write(name + " : " + score.getText() + "\n");
+                if(name != null)
+                    bufferWriter.write(name + ":" + sc + "\n");
                 bufferWriter.close();
-
         }
         catch (IOException e){
             System.out.println(e.getMessage());
@@ -133,6 +134,39 @@ public class Window extends JFrame implements ActionListener{ //,KeyListener
 
     }
 
+
+    void setStr(String value,String key)
+    {
+        str+=(key + " : " + value + "\n");
+    }
+    void showLeaderBoard(){
+        try {
+            HashMap<String, String> map = new HashMap<>();
+            Scanner sc = new Scanner(leaderBoard);
+
+
+            while(sc.hasNextLine()){
+                String[] spl =  (sc.nextLine().split(":"));
+
+                map.put(spl[0], spl[1]);
+
+
+
+            }
+
+            map.entrySet()
+                    .stream()
+                    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                    .forEach(entry -> {
+                            setStr(entry.getValue(),entry.getKey());
+
+                    });
+            JOptionPane.showMessageDialog(null, str);
+        }
+        catch (IOException e){
+
+        }
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource()==newGame){
@@ -141,10 +175,10 @@ public class Window extends JFrame implements ActionListener{ //,KeyListener
             add(field);
         }
         else if(e.getSource()==about){
-
+            JOptionPane.showMessageDialog(null, "Made by me");
         }
         else if(e.getSource()==highScores){
-
+            showLeaderBoard();
         }
         else if(e.getSource()==exit){
 
@@ -155,18 +189,14 @@ public class Window extends JFrame implements ActionListener{ //,KeyListener
                 remove(field);
                 field = new Field(this);
                 add(field);
-
-                String playerName = JOptionPane.showInputDialog("GG");
-                addPlayer(playerName);
+                score.setText("0");
+                String playerName = JOptionPane.showInputDialog("GG Enter name");
+                addPlayer(playerName, score.getText());
                 gameOver = false;
             }
         }
 
     }
-
-
-
-
 
 
 

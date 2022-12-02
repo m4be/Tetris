@@ -1,0 +1,5 @@
+dimasik : 1
+null : 2
+Durochok : 0
+DImasik : 3
+DUra : 0

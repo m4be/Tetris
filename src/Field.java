@@ -21,8 +21,6 @@ public class Field extends JPanel implements ActionListener{ //
     int currRotation = 0;
     public ArrayList<Integer[][]> shapes = new ArrayList<>();
 
-    JLabel statusBar;
-    boolean gameOver;
     int score = 0;
 
     Window parent;
@@ -137,7 +135,7 @@ public class Field extends JPanel implements ActionListener{ //
                 }
                 if(cnt == 9) {
                     removeLine(i);
-                    statusBar.setText(Integer.toString(score+=1));
+                    parent.score.setText(Integer.toString(score+=1));
                 }
             }
         }
@@ -147,7 +145,6 @@ public class Field extends JPanel implements ActionListener{ //
         for(j = 0; j < 9; j++)
             if(Table[2][j] == 2)
                 parent.setGameOver(true);
-
     }
 
 
@@ -157,8 +154,6 @@ public class Field extends JPanel implements ActionListener{ //
     public Field(Window parent){
         this.parent = parent;
 
-        statusBar = parent.score;
-        statusBar.setText(Integer.toString(score));
 
 
 
