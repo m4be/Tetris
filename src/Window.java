@@ -25,8 +25,9 @@ public class Window extends JFrame{ //,KeyListener
     Field field;
     String str = "";
     File leaderBoard = new File("LeaderBoard.txt");
+    Controller controller;
 
-
+    String sc = "";
 
     Window() {
 
@@ -46,7 +47,7 @@ public class Window extends JFrame{ //,KeyListener
         setFocusable(true);
         field = new Field(this);
 
-        Controller controller = new Controller(this,field);
+        controller = new Controller(this,field);
 
 
         score.setVerticalAlignment(JLabel.BOTTOM);
@@ -115,9 +116,6 @@ public class Window extends JFrame{ //,KeyListener
                 String[] spl =  (sc.nextLine().split(":"));
 
                 map.put(spl[0], spl[1]);
-
-
-
             }
 
             map.entrySet()
@@ -141,17 +139,18 @@ public class Window extends JFrame{ //,KeyListener
         remove(field);
         field = new Field(this);
         add(field);
+        controller = new Controller(this,field);
     }
     void checkGameOver(){
         if(gameOver)
         {
             remove(field);
             String playerName = JOptionPane.showInputDialog("GG Enter name");
+            sc = score.getText();
+            addPlayer(playerName, sc);
             field = new Field(this);
             add(field);
             score.setText("0");
-
-            addPlayer(playerName, score.getText());
             gameOver = false;
         }
     }
